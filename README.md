@@ -1,6 +1,24 @@
-## Docker-compose 環境立ち上げ
+## Docker-compose 環境構築手順
 
-### 準備
+- main ブランチからローカルにクローンする
+
+- .env.example のファイル名を.env に変更する
+
+- `composer install`を実行して、Laravel 依存関係をインストールする
+
+- `docker-compose up -d`を実行して、docker-compose を立ち上げ
+
+- `php artisan migrate`実行して、マイグレーションを実行する
+
+- (もし付与されていない場合)`chmod -R 775 storage bootstrap/cache`実行して、キャッシュディレクトリに書き込み権限を付与する
+
+- ブラウザで`http://localhost:8080`を入力して画面を開く
+
+- メールは`http://localhost:8025`にて画面を開き mailpit にて確認する
+
+## 1 から Docker-compose 準備する場合
+
+以下に、参考として今回 1 から Docker-compose 関連ファイルを準備した際の手順を記載する
 
 - プロジェクト用のフォルダ作成
 
