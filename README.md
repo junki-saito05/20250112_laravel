@@ -1,6 +1,48 @@
-## Docker-compose 環境立ち上げ
+## Docker コンテナを使用した Laravel 環境構築手順
 
-### 準備
+1. main ブランチからローカルにクローンする
+
+2. .env.example をコピーして.env ファイルを作成する
+
+3. `docker-compose build`を実行して、ビルドする
+
+4. `docker-compose up -d`を実行して、docker-compose を立ち上げ
+
+- 以下のように表示されれば OK
+
+```
+[+] Running 4/4
+ ⠿ Container 20250112_laravel-mailpit-1  Started                                                                   0.6s
+ ⠿ Container laravel_db                  Started                                                                   0.4s
+ ⠿ Container laravel_app                 Started                                                                   0.9s
+ ⠿ Container laravel_web                 Started                                                                   1.2s
+```
+
+5. `docker exec -it laravel_app php artisan migrate`実行して、マイグレーションを実行する
+
+- 以下のように表示されれば OK
+
+```
+INFO  Preparing database.
+
+  Creating migration table .............................................................................. 76.40ms DONE
+
+   INFO  Running migrations.
+
+  0001_01_01_000000_create_users_table ................................................................. 168.69ms DONE
+  0001_01_01_000001_create_cache_table .................................................................. 44.52ms DONE
+  0001_01_01_000002_create_jobs_table .................................................................. 172.29ms DONE
+```
+
+6. ブラウザで`http://localhost:8080`を入力して、Laravel 画面が開けることを確認する
+
+- (もし付与されていない場合)`chmod -R 775 storage bootstrap/cache`実行して、キャッシュディレクトリに書き込み権限を付与する
+
+7. ブラウザで`http://localhost:8025`を入力して、mailpit が開けることを確認する(メール送信はこちらで確認する)
+
+## 1 から Docker-compose 準備する場合
+
+以下に、参考として今回 1 から Docker-compose 関連ファイルを準備した際の手順を記載する
 
 - プロジェクト用のフォルダ作成
 

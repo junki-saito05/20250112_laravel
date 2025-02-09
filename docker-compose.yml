@@ -2,12 +2,13 @@ version: '3.8'
 services:
   app:
     build:
-      context: ./php
+      context: ./
       dockerfile: Dockerfile
     container_name: laravel_app
     working_dir: /var/www/html
     volumes:
       - ./laravel:/var/www/html
+      - laravel-vendor:/var/www/html/vendor
       - ./.env:/var/www/html/.env
     environment:
         APP_ENV: local
@@ -61,4 +62,6 @@ services:
 
 volumes:
   db_data:
+      driver: local
+  laravel-vendor:
       driver: local
