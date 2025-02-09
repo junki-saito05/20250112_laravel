@@ -2,7 +2,7 @@ version: '3.8'
 services:
   app:
     build:
-      context: ./php
+      context: ./
       dockerfile: Dockerfile
     container_name: laravel_app
     working_dir: /var/www/html
