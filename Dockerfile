@@ -1,29 +1,47 @@
 FROM php:8.2-fpm
 
-# 必要なパッケージをインストール
+# 必要ライブラリインストール
 RUN apt-get update && apt-get install -y \
-  zip \
   unzip \
   git \
   curl \
   libpq-dev \
-  && docker-php-ext-install pdo_mysql
+  tzdata \
+  libpng-dev \
+  libjpeg-dev \
+  libfreetype6-dev \
+  && ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+  && echo "Asia/Tokyo" > /etc/timezone \
+  && dpkg-reconfigure -f noninteractive tzdata
+
+# Composer のインストール
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+RUN php composer-setup.php
+RUN php -r "unlink('composer-setup.php');"
+RUN mv composer.phar /usr/local/bin/composer
+
+# Xdebug のインストール
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+
+# Xdebug 設定
+COPY docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/
 
 # 作業ディレクトリの設定
 WORKDIR /var/www/html
 
-# Laravelアプリのコードをコピー(Laravelのアプリケーションをコンテナに含める)
+# Laravel アプリのコードをコピー & ライブラリインストール
 COPY ./laravel/ /var/www/html/
+RUN chown -R laravel:laravel /var/www/html/
+RUN composer install
 
-# Composerのインストール
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# nginx で参照する場所を定義
+VOLUME ["/var/www/html/public"]
 
-# Composerのパッケージをインストール(コンテナ内で依存パッケージをインストール)
-RUN composer install --no-dev --optimize-autoloader
+# 権限の設定（storage, bootstrap/cache）
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 権限の設定(storageやbootstrap/cacheに書き込み権限付与)
-RUN chown -R www-data:www-data /var/www/html \
-  && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+USER laravel
 
-# PHP-FPMを起動
+# PHP-FPM を起動
 CMD ["php-fpm"]
