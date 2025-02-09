@@ -6,9 +6,7 @@
 
 3. `docker-compose build`を実行して、ビルドする
 
-4. `docker exec -it laravel_app composer install --no-dev --optimize-autoloader`を実行して、Laravel 依存関係をインストールする
-
-5. `docker-compose up -d`を実行して、docker-compose を立ち上げ
+4. `docker-compose up -d`を実行して、docker-compose を立ち上げ
 
 - 以下のように表示されれば OK
 
@@ -20,7 +18,7 @@
  ⠿ Container laravel_web                 Started                                                                   1.2s
 ```
 
-6. `docker exec -it laravel_app php artisan migrate`実行して、マイグレーションを実行する
+5. `docker exec -it laravel_app php artisan migrate`実行して、マイグレーションを実行する
 
 - 以下のように表示されれば OK
 
@@ -36,11 +34,11 @@ INFO  Preparing database.
   0001_01_01_000002_create_jobs_table .................................................................. 172.29ms DONE
 ```
 
-7. ブラウザで`http://localhost:8080`を入力して、Laravel 画面が開けることを確認する
+6. ブラウザで`http://localhost:8080`を入力して、Laravel 画面が開けることを確認する
 
 - (もし付与されていない場合)`chmod -R 775 storage bootstrap/cache`実行して、キャッシュディレクトリに書き込み権限を付与する
 
-8. ブラウザで`http://localhost:8025`を入力して、mailpit が開けることを確認する(メール送信はこちらで確認する)
+7. ブラウザで`http://localhost:8025`を入力して、mailpit が開けることを確認する(メール送信はこちらで確認する)
 
 ## 1 から Docker-compose 準備する場合
 

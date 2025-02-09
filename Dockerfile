@@ -1,5 +1,9 @@
 FROM php:8.2-fpm
 
+# WSLのUIDとGIDを環境変数として渡す
+ARG PUID=1000
+ARG PGID=1000
+
 # 必要ライブラリインストール
 RUN apt-get update && apt-get install -y \
   unzip \
@@ -10,9 +14,17 @@ RUN apt-get update && apt-get install -y \
   libpng-dev \
   libjpeg-dev \
   libfreetype6-dev \
+  libmariadb-dev \
   && ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
   && echo "Asia/Tokyo" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata
+
+# PDO MySQL拡張をインストール
+RUN docker-php-ext-install pdo_mysql
+
+# ユーザーとグループを作成し、UIDとGIDを設定する
+RUN addgroup --gid ${PGID} laravel && \
+  adduser --uid ${PUID} --gid ${PGID} --disabled-password --gecos "" laravel
 
 # Composer のインストール
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
